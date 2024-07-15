@@ -13,7 +13,7 @@ class Book(models.Model):
     )
     quantity: int = models.IntegerField(null=False, blank=True)
     publication_date: date = models.DateField(null=True, blank=True)
-    language: str = models.CharField(max_length=50, null=False, blank=False)
+    language: str = models.CharField(max_length=50, null=False, blank=True)
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     updated_at: datetime = models.DateTimeField(auto_now=True)
 
