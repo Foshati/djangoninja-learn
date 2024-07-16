@@ -1,3 +1,4 @@
+from email import message
 from typing import List
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
@@ -32,3 +33,13 @@ def update_book(request, book_id: int, payload: BookSchema):
         setattr(book, attr, value)
     book.save()
     return book
+
+
+@app.delete("/books/{book_id}")
+def deleted_book(request, book_id: int):
+    book = get_object_or_404(Book, id=book_id)
+    book.delete()
+    return {"message": "the book was deleted"}
+
+
+# GET /book/search?query=school
