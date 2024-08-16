@@ -12,5 +12,3 @@ class BookSchema(ModelSchema):
 class BookFindSchema(FilterSchema):
     name: Optional[str] = Field(None, q="name__startswith")
     author: Optional[str] = None
-
-

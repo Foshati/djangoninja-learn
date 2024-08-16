@@ -7,6 +7,7 @@ from ninja.security import APIKeyQuery
 from test.test_zoneinfo import valid_keys
 from .models import Book
 from .schemas import BookFindSchema, BookSchema
+from ninja.throttling import AnonRateThrottle
 
 
 # API Key for security
@@ -15,7 +16,7 @@ from .schemas import BookFindSchema, BookSchema
 class ApiKey(APIKeyQuery):
     param_name = "foshati"
 
-    def authenticate(self, request: HttpRequest, key: Optional[str]) -> Optional[Any]:
+    def authenticate(self, request, key: Optional[str]) -> Optional[Any]:
         valid_keys = ["key1", "key1234"]
         if key in valid_keys:
             return {"key": key}
@@ -33,8 +34,13 @@ def create_book(request, payload: BookSchema):
     return book
 
 
-@app.get("/books", response=List[BookSchema], auth=None)
-def list_books(request):
+@app.get(
+    "/books",
+    response=List[BookSchema],
+    auth=None,
+    throttle=[AnonRateThrottle("60/hour")],
+)
+def list_books(request: HttpRequest):
     books = Book.objects.all()
     return books
 
@@ -75,6 +81,7 @@ def search_book(request, query: str):
 def find_book(request, find: BookFindSchema = Query(...)):
     books = Book.objects.all()
     book = find.filter(books)
+    # print(find.get_filter_expression())
     return book
 
 
